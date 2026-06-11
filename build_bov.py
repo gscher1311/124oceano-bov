@@ -270,7 +270,9 @@ UNITS = 7
 SF = 5825  # ESTIMATE per owner unit plans (assessor blank); flagged in disclaimer
 LOT_SF = 9147
 LOT_ACRES = 0.21
-YEAR_BUILT = 2026  # displayed as "Renovated" (county publishes no year built)
+YEAR_BUILT = "c. 1965"  # ESTIMATE — county publishes no year built for this parcel; anchored to
+# comparable Oceano Ave multifamily vintages (330 Oceano built 1965; 101 Oceano condos 1961).
+# Displayed with "(Est.)" labeling everywhere; renovation year 2026 shown separately.
 TAX_RATE = 0.0105404  # Santa Barbara TRA 002-001 ad valorem (verified from 2025 bill)
 FIXED_ASSESSMENTS = 69.99  # SB flat direct assessments (flood + vector), price-independent
 GSR = 348_840  # pro forma: 5 x $4,295 + 1 x $4,395 + 1 x $3,200, x12 (delivered vacant)
@@ -513,7 +515,7 @@ PRICING_RATIONALE = "The $4,995,000 list price is anchored to the only two relev
 COMP_CONFIDENCE = "MODERATE"
 
 # Assumptions & Conditions disclaimer
-ASSUMPTIONS_DISCLAIMER = "This analysis is based on information provided by ownership and third-party sources deemed reliable. Building and unit square footages are per owner plans and subject to verification. Operating figures are presented pro forma at delivery of a fully renovated, vacant building; individual utility metering is assumed pending confirmation. Buyer should independently verify all information during due diligence. Pro forma projections are estimates and not guaranteed."
+ASSUMPTIONS_DISCLAIMER = "This analysis is based on information provided by ownership and third-party sources deemed reliable. Building and unit square footages are per owner plans and subject to verification. Year built is estimated; the county assessor does not publish a construction year for this parcel, and the estimate reflects the vintage of comparable Oceano Ave multifamily. Operating figures are presented pro forma at delivery of a fully renovated, vacant building; individual utility metering is assumed pending confirmation. Buyer should independently verify all information during due diligence. Pro forma projections are estimates and not guaranteed."
 
 # Property Info Tables (4 tables for Property Details page) — SB-correct, no LA boilerplate
 PROP_OVERVIEW = [
@@ -523,6 +525,7 @@ PROP_OVERVIEW = [
     ("Building SF", "&plusmn;5,825 SF (per owner plans; buyer to verify)"),
     ("Lot Size", "9,147 SF (0.21 acres)"),
     ("Stories", "2"),
+    ("Year Built", "Circa 1965, estimated (not on county record; consistent with comparable Oceano Ave multifamily built 1961-1965)"),
     ("Condition", "Fully renovated 2026 (stud-level)"),
     ("Occupancy at Delivery", "100% vacant"),
 ]
@@ -1291,6 +1294,7 @@ html_parts.append(f"""
     <div class="cover-stats">
       <div class="cover-stat"><span class="cover-stat-value">{UNITS}</span><span class="cover-stat-label">Units</span></div>
       <div class="cover-stat"><span class="cover-stat-value">&plusmn;{SF:,}</span><span class="cover-stat-label">Square Feet</span></div>
+      <div class="cover-stat"><span class="cover-stat-value">{YEAR_BUILT}</span><span class="cover-stat-label">Year Built (Est.)</span></div>
       <div class="cover-stat"><span class="cover-stat-value">2026</span><span class="cover-stat-label">Renovated</span></div>
       <div class="cover-stat"><span class="cover-stat-value">{LOT_ACRES:.2f}</span><span class="cover-stat-label">Acres</span></div>
     </div>
@@ -1547,8 +1551,8 @@ html_parts.append(f"""
       <div class="metrics-grid-4">
         <div class="metric-card"><span class="metric-value">{UNITS}</span><span class="metric-label">Units</span></div>
         <div class="metric-card"><span class="metric-value">{SF:,}</span><span class="metric-label">Square Feet</span></div>
-        <div class="metric-card"><span class="metric-value">{LOT_ACRES:.2f}</span><span class="metric-label">Lot Acres</span></div>
-        <div class="metric-card"><span class="metric-value">{YEAR_BUILT}</span><span class="metric-label">Year Built</span></div>
+        <div class="metric-card"><span class="metric-value">{YEAR_BUILT}</span><span class="metric-label">Year Built (Est.)</span></div>
+        <div class="metric-card"><span class="metric-value">2026</span><span class="metric-label">Renovated</span></div>
       </div>
       <div class="inv-text">
         <p>{INVESTMENT_OVERVIEW_P1}</p>
@@ -1846,7 +1850,8 @@ html_parts.append(f"""
             <tr><td>Price / SF</td><td class="num">${m['per_sf']:,.0f}</td></tr>
             <tr><td>Gross SF</td><td class="num">{SF:,}</td></tr>
             <tr><td>Lot Size</td><td class="num">{LOT_SF:,} SF ({LOT_ACRES:.2f} ac)</td></tr>
-            <tr><td>Year Built</td><td class="num">{YEAR_BUILT}</td></tr>
+            <tr><td>Year Built (Est.)</td><td class="num">{YEAR_BUILT}</td></tr>
+            <tr><td>Renovated</td><td class="num">2026</td></tr>
           </tbody>
         </table>
         <table class="summary-table">
