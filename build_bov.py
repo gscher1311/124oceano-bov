@@ -50,7 +50,7 @@ PDF_LINK = (PDF_WORKER_URL + "/?url=" + urllib.parse.quote(BOV_BASE_URL + "/", s
 INCLUDE_TRANSACTION_HISTORY = False
 INCLUDE_DEVELOPMENT_POTENTIAL = False
 INCLUDE_ADU_OPPORTUNITY = False
-INCLUDE_ON_MARKET_COMPS = False
+INCLUDE_ON_MARKET_COMPS = True  # 160 Ash Ave active competition (Glen-directed 2026-06-11); table + narrative only, no map (Carpinteria sits far out of the same-street frame)
 INCLUDE_RENOVATION = True  # custom section for this build (gut-reno, delivered vacant)
 PROPERTY_TYPE = "stabilized"  # pro forma stabilized presentation (delivered vacant)
 
@@ -128,6 +128,7 @@ IMG = {
     "reno_bed": load_image_b64("reno_bed.jpg"),  # renovated bedroom
     "reno_bed2": load_image_b64("reno_bed2.jpg"),# renovated bedroom 2
     "reno_room": load_image_b64("reno_room.jpg"),# renovated room w/ hall
+    "floorplan": load_image_b64("floor-plan-2bd2ba.png"),  # Hover scan 2025-08-20, representative 2BD/2BA
 }
 
 # ============================================================
@@ -267,7 +268,9 @@ def build_markers_from_comps(comps, addr_dict, comp_color, subject_lat, subject_
 # ============================================================
 LIST_PRICE = 4_995_000
 UNITS = 7
-SF = 5825  # ESTIMATE per owner unit plans (assessor blank); flagged in disclaimer
+SF = 5175  # BLEND: 5 typical 2BD/2BA at ~720 SF gross (Hover interior scan 2025-08-20, 638 SF
+# interior + walls, see 00_Source_Extractions/hover_floor_plan_extraction.md) + Unit 1 ~900 SF
+# (owner plan, unconfirmed) + Unit 3 ~675 SF (1BD estimate). Assessor blank; flagged in disclaimer.
 LOT_SF = 9147
 LOT_ACRES = 0.21
 YEAR_BUILT = "c. 1965"  # ESTIMATE — county publishes no year built for this parcel; anchored to
@@ -382,14 +385,16 @@ if LIST_PRICE > 0:
 # Rent Roll — stabilized format: (unit, type, sf, rent, status, notes)
 # Building delivered 100% vacant; rents are pro forma at delivery (Glen-set, comp-validated).
 # Unit 3 = 1BD per Zillow building roster; unit numbering otherwise preliminary per owner plans.
+# Typical 2BD/2BA SF = ~720 gross per Hover interior scan of one representative unit (2025-08-20):
+# 638 SF interior room area plus walls. Which unit was scanned is unconfirmed (seller call 6/12).
 RENT_ROLL = [
-    ("1", "2BD/2BA", 900, 4395, "Delivered Vacant", "Larger plan (±900 SF)"),
-    ("2", "2BD/2BA", 850, 4295, "Delivered Vacant", "Pro forma at delivery"),
+    ("1", "2BD/2BA", 900, 4395, "Delivered Vacant", "Larger plan (±900 SF, owner plan)"),
+    ("2", "2BD/2BA", 720, 4295, "Delivered Vacant", "Typical plan (Hover-measured)"),
     ("3", "1BD/1BA", 675, 3200, "Delivered Vacant", "Pro forma at delivery"),
-    ("4", "2BD/2BA", 850, 4295, "Delivered Vacant", "Pro forma at delivery"),
-    ("5", "2BD/2BA", 850, 4295, "Delivered Vacant", "Pro forma at delivery"),
-    ("6", "2BD/2BA", 850, 4295, "Delivered Vacant", "Pro forma at delivery"),
-    ("7", "2BD/2BA", 850, 4295, "Delivered Vacant", "Pro forma at delivery"),
+    ("4", "2BD/2BA", 720, 4295, "Delivered Vacant", "Typical plan (Hover-measured)"),
+    ("5", "2BD/2BA", 720, 4295, "Delivered Vacant", "Typical plan (Hover-measured)"),
+    ("6", "2BD/2BA", 720, 4295, "Delivered Vacant", "Typical plan (Hover-measured)"),
+    ("7", "2BD/2BA", 720, 4295, "Delivered Vacant", "Typical plan (Hover-measured)"),
 ]
 
 # Sale Comps
@@ -405,9 +410,11 @@ SALE_COMPS = [
 ]
 
 # On-Market Comps
+# 160 Ash facts: 00_Source_Extractions/comp_160_ash_carpinteria.md. SF "--" on purpose: the
+# published 7,405 figure conflicts between living area (gtprop) and lot size (aggregator).
+# List price history: $6.5M 6/11/2025 -> $5.9M 7/31/2025 -> $5,495,000 9/26/2025. DOM ~12 months.
 ON_MARKET_COMPS = [
-    # {"num": 1, "addr": "456 Oak Ave", "units": 6, "yr": 1955, "sf": 4800, "price": 2500000, "ppu": 416667, "psf": 521, "dom": 15, "notes": "New listing"},
-    # DEAL-SPECIFIC
+    {"num": 1, "addr": "160 Ash Ave, Carpinteria (White Caps)", "units": 7, "yr": 1963, "sf": "--", "price": 5495000, "ppu": 785000, "psf": "--", "dom": "12 mo", "notes": "Renovated, furnished, delivered vacant, 1.5 blocks to beach. Reduced twice from $6.5M."},
 ]
 
 # Rent Comps — renovated-product focus; sf=0 renders as "--" (Sea Cliff OM market rents carry no SF)
@@ -417,7 +424,7 @@ RENT_COMPS = [
     {"addr": "Sea Crest Apartments, 100 Oceano Ave", "type": "1BD/1BA", "sf": 780, "rent": 2950, "rent_sf": 3.78, "source": "Zumper (renovated)"},
     {"addr": "868 Highland Dr", "type": "2BD/1.5BA", "sf": 1083, "rent": 3800, "rent_sf": 3.51, "source": "Apartment List (gut-renovated)"},
     {"addr": "1021 Cliff Dr", "type": "2BD/2BA", "sf": 1090, "rent": 4995, "rent_sf": 4.58, "source": "Renovated, ocean view"},
-    {"addr": "124 Oceano Ave (subject, pre-renovation)", "type": "2BD/2BA", "sf": 850, "rent": 3500, "rent_sf": 4.12, "source": "Leased 07/2025, dated condition"},
+    {"addr": "124 Oceano Ave (subject, pre-renovation)", "type": "2BD/2BA", "sf": 720, "rent": 3500, "rent_sf": 4.86, "source": "Leased 07/2025, dated condition"},
 ]
 
 # Expense line items — CRITICAL: Real Estate Taxes value MUST be buyer reassessed tax (LIST_PRICE * TAX_RATE), NOT seller current Prop 13 tax — (label, current_value, note_number)
@@ -505,24 +512,24 @@ BUYER_CLOSING = "From legacy coastal capital to exchange buyers on a clock, 124 
 COMP_NARRATIVES = """<p class="narrative"><strong>1. Sea Cliff Apartments, 20-80 Oceano Ave (Oceanfront).</strong> The 29-unit Sea Cliff Apartments traded in February 2025 for $21,150,000, or $729,310 per unit, after being offered at $25M. On the income in its offering, which included nine short-term vacation rentals, the closing price reflects an approximate 4.75% cap and a 12 GRM. Sea Cliff sits on the sand overlooking Leadbetter Beach, a half block from the subject, and it is the benchmark this pricing is built against: matching its 4.75% cap implies roughly $5,050,000 for the subject, so the list price asks slightly more cap for a location one row back. Its offering also carried long-term market rents of $4,300 for 2-bedroom units and $3,750 for 1-bedrooms, direct support for the subject's pro forma.</p>
 <p class="narrative"><strong>2. 330 Oceano Ave.</strong> Three blocks up the same street, this 5-unit 1965 building sold in November 2024 for $2,950,000, or $590,000 per unit, after a hold of more than 20 years and with original-condition interiors. It is the unrenovated floor for the street: an older, smaller building with no renovation story still commanded $590,000 per unit, which frames the premium a fully renovated, delivered-vacant building earns above it.</p>"""
 
-# On-Market Narrative — section excluded
-ON_MARKET_NARRATIVE = ""
+# On-Market Narrative — 160 Ash Ave active competition (Glen-directed 2026-06-11)
+ON_MARKET_NARRATIVE = """<strong>160 Ash Ave, Carpinteria (White Caps).</strong> The only directly competitive offering on the market is this fully renovated 7-unit building a block and a half from Carpinteria State Beach: seven 2-bedroom/1-bath units, sold furnished and delivered vacant, with 9 parking spaces and on-site laundry. It came to market in June 2025 at $6,500,000 and has taken two reductions, to $5,900,000 in July and to its current $5,495,000 in September 2025, $785,000 per unit after roughly 12 months of exposure. The subject lists at $713,571 per unit, below the standing competition, with larger 2-bedroom/2-bath floor plans in the stronger Santa Barbara Mesa location next to SBCC and Leadbetter Beach. A buyer comparing the two renovated, delivered-vacant coastal offerings finds the subject priced $71,429 per unit under the alternative that has not traded."""
 
 # Pricing Rationale
-PRICING_RATIONALE = "The $4,995,000 list price is anchored to the only two relevant trades of this cycle, both on the subject's own street. Sea Cliff Apartments closed in February 2025 at an approximate 4.75% cap and $729,310 per unit on the sand; pricing the subject at Sea Cliff's exact cap would imply roughly $5,050,000, so the list asks a slightly higher cap for a location one row back. The unrenovated 330 Oceano print at $590,000 per unit defines the floor a renovated, vacant building clears. At list, the subject shows a 4.81% pro forma cap on Year 1 NOI of $240,464 with property taxes fully reassessed, $713,571 per unit, and a 14.3 GRM whose spread to Sea Cliff's 12 reflects a 29% expense ratio against the trophy's roughly 40%. Sales from November 2024 through February 2025 frame the range, and we expect a trade between $4,750,000 and $4,995,000."
+PRICING_RATIONALE = "The $4,995,000 list price is anchored to the only two relevant trades of this cycle, both on the subject's own street. Sea Cliff Apartments closed in February 2025 at an approximate 4.75% cap and $729,310 per unit on the sand; pricing the subject at Sea Cliff's exact cap would imply roughly $5,050,000, so the list asks a slightly higher cap for a location one row back. The unrenovated 330 Oceano print at $590,000 per unit defines the floor a renovated, vacant building clears. At list, the subject shows a 4.81% pro forma cap on Year 1 NOI of $240,464 with property taxes fully reassessed, $713,571 per unit, and a 14.3 GRM whose spread to Sea Cliff's 12 reflects a 29% expense ratio against the trophy's roughly 40%. Sales from November 2024 through February 2025 frame the range, and we expect a trade between $4,750,000 and $4,995,000. The active market confirms the positioning: the only competing renovated 7-unit coastal offering, 160 Ash Ave in Carpinteria, asks $785,000 per unit and has sat about 12 months through two reductions from $6.5M, while the subject lists at $713,571 per unit."
 
 # Confidence levels are never displayed client-facing
 COMP_CONFIDENCE = "MODERATE"
 
 # Assumptions & Conditions disclaimer
-ASSUMPTIONS_DISCLAIMER = "This analysis is based on information provided by ownership and third-party sources deemed reliable. Building and unit square footages are per owner plans and subject to verification. Year built is estimated; the county assessor does not publish a construction year for this parcel, and the estimate reflects the vintage of comparable Oceano Ave multifamily. Operating figures are presented pro forma at delivery of a fully renovated, vacant building; individual utility metering is assumed pending confirmation. Buyer should independently verify all information during due diligence. Pro forma projections are estimates and not guaranteed."
+ASSUMPTIONS_DISCLAIMER = "This analysis is based on information provided by ownership and third-party sources deemed reliable. Typical unit square footage reflects a Hover interior scan of one representative 2-bedroom unit (August 2025, 638 SF of interior rooms, approximately 720 SF gross including walls); remaining unit and building square footages blend that measurement with owner plans and are subject to verification. Year built is estimated; the county assessor does not publish a construction year for this parcel, and the estimate reflects the vintage of comparable Oceano Ave multifamily. Operating figures are presented pro forma at delivery of a fully renovated, vacant building; individual utility metering is assumed pending confirmation. Buyer should independently verify all information during due diligence. Pro forma projections are estimates and not guaranteed."
 
 # Property Info Tables (4 tables for Property Details page) — SB-correct, no LA boilerplate
 PROP_OVERVIEW = [
     ("Address", FULL_ADDRESS),
     ("APN", "045-230-003"),
     ("Units", "7 (six 2BD/2BA, one 1BD/1BA)"),
-    ("Building SF", "&plusmn;5,825 SF (per owner plans; buyer to verify)"),
+    ("Building SF", "&plusmn;5,175 SF (Hover-measured typical unit + owner plans; buyer to verify)"),
     ("Lot Size", "9,147 SF (0.21 acres)"),
     ("Stories", "2"),
     ("Year Built", "Circa 1965, estimated (not on county record; consistent with comparable Oceano Ave multifamily built 1961-1965)"),
@@ -613,10 +620,9 @@ if ({map_id}El) {{
 
 # Generate Leaflet JS for each comp section
 sale_map_js = build_map_js("saleMap", SALE_COMPS, "#1B3A5C", COMP_ADDRESSES, SUBJECT_LAT, SUBJECT_LNG)
-if INCLUDE_ON_MARKET_COMPS:
-    active_map_js = build_map_js("activeMap", ON_MARKET_COMPS, "#2E7D32", COMP_ADDRESSES, SUBJECT_LAT, SUBJECT_LNG)
-else:
-    active_map_js = ""
+# On-market map intentionally disabled: 160 Ash Ave (Carpinteria) sits ~9 miles down-coast,
+# far outside the same-street comp frame, and no resolved rooftop pin exists for it.
+active_map_js = ""
 rent_comps_for_map = [{"addr": rc["addr"], "units": "", "price": 0} for rc in RENT_COMPS]
 rent_map_js = build_map_js("rentMap", rent_comps_for_map, "#1B3A5C", RENT_COMP_ADDRESSES, SUBJECT_LAT, SUBJECT_LNG)
 
@@ -632,10 +638,7 @@ sale_markers = build_markers_from_comps(SALE_COMPS, COMP_ADDRESSES, "#1B3A5C", S
 IMG["sale_map_static"] = generate_static_map(SUBJECT_LAT, SUBJECT_LNG, sale_markers,
     width=800, height=300, zoom=calc_auto_zoom(sale_markers))
 
-if INCLUDE_ON_MARKET_COMPS:
-    active_markers = build_markers_from_comps(ON_MARKET_COMPS, COMP_ADDRESSES, "#2E7D32", SUBJECT_LAT, SUBJECT_LNG)
-    IMG["active_map_static"] = generate_static_map(SUBJECT_LAT, SUBJECT_LNG, active_markers,
-        width=800, height=300, zoom=calc_auto_zoom(active_markers))
+# On-market static map skipped (see active_map_js note above)
 
 rent_markers = build_markers_from_comps(rent_comps_for_map, RENT_COMP_ADDRESSES, "#1B3A5C", SUBJECT_LAT, SUBJECT_LNG)
 IMG["rent_map_static"] = generate_static_map(SUBJECT_LAT, SUBJECT_LNG, rent_markers,
@@ -1315,6 +1318,7 @@ toc_links += '<a href="#marketing">Marketing</a>'
 toc_links += '<a href="#investment">Investment</a>'
 toc_links += '<a href="#location">Location</a>'
 toc_links += '<a href="#renovation">Renovation</a>'
+toc_links += '<a href="#floorplan">Floor Plan</a>'
 toc_links += '<a href="#prop-details">Property</a>'
 toc_links += '<a href="#property-info">Buyer Profile</a>'
 toc_links += '<a href="#sale-comps">Sale Comps</a>'
@@ -1637,6 +1641,23 @@ if INCLUDE_RENOVATION:
 """)
 
 # ============================================================
+# FLOOR PLAN (representative 2BD/2BA, Hover interior scan 2025-08-20)
+# ============================================================
+html_parts.append(f"""
+<div class="page-break-marker"></div>
+<div class="section" id="floorplan">
+  <div class="section-title">Representative Floor Plan</div>
+  <div class="section-subtitle">Typical 2BD/2BA Unit | Measured Interior Scan</div>
+  <div class="section-divider"></div>
+  <p class="narrative">The typical 2-bedroom/2-bath plan was professionally scanned and measured in August 2025. Interior rooms total 638 SF: an open living and dining area of 246 SF, a 66 SF kitchen, bedrooms of 127 SF and 94 SF, two baths, and a connecting hallway. Including interior walls, the gross unit footprint is approximately 720 SF. The plan lives efficiently: two true bedrooms and two full baths in a footprint that keeps the building's rent per square foot at the top of the submarket.</p>
+  <div style="background:#fff;border:1px solid #E0E0E0;border-radius:6px;padding:18px;margin:14px 0;text-align:center;">
+    <img src="{IMG['floorplan']}" alt="Representative 2BD/2BA floor plan" style="max-width:100%;height:auto;">
+  </div>
+  <div class="condition-note"><div class="condition-note-label">Measurement Source</div>One representative 2-bedroom unit measured by Hover interior scan, August 2025. Remaining units are per owner plans. Buyer to verify all square footages during due diligence.</div>
+</div>
+""")
+
+# ============================================================
 # PAGE 7: PROPERTY DETAILS
 # ============================================================
 def build_info_table(title, rows, colspan=2):
@@ -1751,16 +1772,14 @@ if INCLUDE_ON_MARKET_COMPS:
     html_parts.append(f"""
 <div class="page-break-marker"></div>
 <div class="section" id="on-market">
-  <div class="section-title">On-Market Comparables</div>
-  <div class="section-subtitle">Active Multifamily Listings</div>
+  <div class="section-title">Active Competition</div>
+  <div class="section-subtitle">On-Market Renovated Coastal Product</div>
   <div class="section-divider"></div>
-  <div class="gmap" id="activeMap"></div>
-  <div class="comp-map-print"><img src="{IMG.get('active_map_static', '')}" alt="On-Market Comps Map"></div>
   <div class="table-scroll"><table>
     <thead><tr><th>#</th><th>Address</th><th class="num">Units</th><th>Year</th><th class="num">SF</th><th class="num">Price</th><th class="num">$/Unit</th><th class="num">$/SF</th><th class="num">DOM</th><th>Notes</th></tr></thead>
     <tbody>{on_market_html}</tbody>
   </table></div>
-  <p>{ON_MARKET_NARRATIVE}</p>
+  <div class="comp-narratives"><p class="narrative">{ON_MARKET_NARRATIVE}</p></div>
 </div>
 """)
 
@@ -1981,7 +2000,7 @@ html_parts.append(f"""
 <div id="pdfOverlay" style="display:none;position:fixed;inset:0;background:rgba(27,58,92,0.85);z-index:99999;justify-content:center;align-items:center;flex-direction:column;gap:12px;">
   <div style="width:48px;height:48px;border:4px solid rgba(197,162,88,0.3);border-top-color:#C5A258;border-radius:50%;animation:pdfSpin 0.8s linear infinite;"></div>
   <div style="color:#fff;font-size:20px;font-weight:700;letter-spacing:0.5px;">Generating PDF</div>
-  <div style="color:#C5A258;font-size:13px;">This typically takes 15–30 seconds. A new tab will open with your download.</div>
+  <div style="color:#C5A258;font-size:13px;">This typically takes 15 to 30 seconds. A new tab will open with your download.</div>
 </div>
 <style>@keyframes pdfSpin {{from{{transform:rotate(0deg)}}to{{transform:rotate(360deg)}}}}</style>
 """)
